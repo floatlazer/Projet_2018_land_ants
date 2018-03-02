@@ -1,0 +1,86 @@
+.TH "gui::context" 3 "Wed Jan 17 2018" "Version 0.1" "Parallel" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+gui::context \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBcontext\fP (int &nargs, char *argv[])"
+.br
+.ti -1c
+.RI "\fBwindow\fP & \fBnew_window\fP ()"
+.br
+.RI "\fICreate a new window ( a\&.k\&.a screen ) to display with OpenGL acceleration\&. \fP"
+.ti -1c
+.RI "\fBwindow\fP & \fBnew_window\fP (size_t width, size_t height, bool is_full_screen=false)"
+.br
+.RI "\fIReturn a new window to display with openGL acceleration\&. \fP"
+.ti -1c
+.RI "\fBwindow\fP & \fBnew_window\fP (const std::string &title, size_t width, size_t height, bool is_full_screen=false)"
+.br
+.RI "\fIReturn a new window to display with specified title\&. \fP"
+.in -1c
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBwindow\fP& gui::context::new_window ()"
+
+.PP
+Create a new window ( a\&.k\&.a screen ) to display with OpenGL acceleration\&. This version create a screen with the best resolution found from the hardware screen resolution\&.
+.PP
+\fBReturns:\fP
+.RS 4
+The new screen 
+.RE
+.PP
+
+.SS "\fBwindow\fP& gui::context::new_window (size_t width, size_t height, bool is_full_screen = \fCfalse\fP)"
+
+.PP
+Return a new window to display with openGL acceleration\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIwidth\fP The width for the screen 
+.br
+\fIheight\fP The height for the screen 
+.br
+\fIis_full_screen\fP Indicates if full screen
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The new screen 
+.RE
+.PP
+
+.SS "\fBwindow\fP& gui::context::new_window (const std::string & title, size_t width, size_t height, bool is_full_screen = \fCfalse\fP)"
+
+.PP
+Return a new window to display with specified title\&. This window is completly defined by the user
+.PP
+\fBParameters:\fP
+.RS 4
+\fItitle\fP The title 
+.br
+\fIwidth\fP The width 
+.br
+\fIheight\fP The height 
+.br
+\fIis_full_screen\fP Indicates if full screen
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+A reference on the new window 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Parallel from the source code\&.

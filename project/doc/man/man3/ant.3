@@ -1,0 +1,58 @@
+.TH "ant" 3 "Mercredi 17 Janvier 2018" "Version 0.1" "simants" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ant \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Types publics"
+
+.in +1c
+.ti -1c
+.RI "enum \fBstate\fP { \fBunloaded\fP = 0, \fBloaded\fP = 1 }"
+.br
+.in -1c
+.SS "Fonctions membres publiques"
+
+.in +1c
+.ti -1c
+.RI "\fBant\fP (const position_t &pos)"
+.br
+.ti -1c
+.RI "\fBant\fP (const \fBant\fP &a)=default"
+.br
+.ti -1c
+.RI "\fBant\fP (\fBant\fP &&a)=default"
+.br
+.ti -1c
+.RI "void \fBset_loaded\fP ()"
+.br
+.ti -1c
+.RI "void \fBunset_loaded\fP ()"
+.br
+.ti -1c
+.RI "bool \fBis_loaded\fP () const "
+.br
+.ti -1c
+.RI "const position_t & \fBget_position\fP () const "
+.br
+.ti -1c
+.RI "void \fBadvance\fP (\fBpheronome\fP &phen, const \fBfractal_land\fP &land, const position_t &pos_food, const position_t &pos_nest, std::size_t &cpteur_food)"
+.br
+.in -1c
+.SS "Fonctions membres publiques statiques"
+
+.in +1c
+.ti -1c
+.RI "static void \fBset_exploration_coef\fP (double eps)"
+.br
+.in -1c
+.SH "Documentation des énumérations membres"
+.PP 
+.SS "enum \fBant::state\fP"
+Une fourmi peut être dans deux états possibles : chargée ( elle porte de la nourriture ) ou non chargée 
+
+.SH "Auteur"
+.PP 
+Généré automatiquement par Doxygen pour simants à partir du code source\&.

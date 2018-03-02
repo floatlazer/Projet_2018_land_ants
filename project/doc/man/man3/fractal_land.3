@@ -1,0 +1,86 @@
+.TH "fractal_land" 3 "Mercredi 17 Janvier 2018" "Version 0.1" "simants" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+fractal_land \- Génère un paysage fractal à l'aide d'un algorithme pseudo-aléatoire\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <fractal_land\&.hpp>\fP
+.SS "Types publics"
+
+.in +1c
+.ti -1c
+.RI "using \fBcontainer\fP = std::vector< double >"
+.br
+.ti -1c
+.RI "using \fBdim_t\fP = unsigned long"
+.br
+.in -1c
+.SS "Fonctions membres publiques"
+
+.in +1c
+.ti -1c
+.RI "\fBfractal_land\fP (const dim_t &log_size, unsigned long nbSeeds, double deviation, int seed=0)"
+.br
+.ti -1c
+.RI "\fBfractal_land\fP (const \fBfractal_land\fP &)=delete"
+.br
+.ti -1c
+.RI "\fBfractal_land\fP (\fBfractal_land\fP &&land)=default"
+.br
+.ti -1c
+.RI "double \fBoperator()\fP (unsigned long i, unsigned long j) const "
+.br
+.ti -1c
+.RI "double & \fBoperator()\fP (unsigned long i, unsigned long j)"
+.br
+.ti -1c
+.RI "dim_t \fBdimensions\fP () const "
+.br
+.ti -1c
+.RI "double * \fBdata\fP ()"
+.br
+.ti -1c
+.RI "const double * \fBdata\fP () const "
+.br
+.in -1c
+.SH "Description détaillée"
+.PP 
+Génère un paysage fractal à l'aide d'un algorithme pseudo-aléatoire\&. 
+
+Génère de façon récursive un paysage fractal à l'aide de algorithme pseudo-aléatoire :
+.IP "1." 4
+Créée une grille de taille $nbSeeds*2^{log\_size}+1$ cases par directions
+.IP "2." 4
+Génère une altitude pour les cases ayant des indices i et j multiples de $2^{log\_size}$ de telle sorte que le gradient d'altitude entre deux points ne dépasse pas la valeur deviation On considère alors les sous-grilles ayant pour indices mimimals : $Ib*2^{log\_size}$, $Jb*2^{log\_size}$ avec Ib et Jb compris entre 0 et nbSeeds ( compris ) et de tailles $2^{log\_size}$\&. On note n=log_size le niveau des sous--grilles initiales\&.
+.IP "3." 4
+Pour chaque sous--grille, on génère l'altitude des points d'indices locaux multiples de $2^{n-1}$ ormi pour les coins de la grille en respectant le gradient de déviation\&.
+.IP "4." 4
+Puis on considère les sous--grilles de niveau n-1 auxquelles on reapplique l'algorithme à partir de 3 et on s'arrête dès que le niveau de la grille atteint zéro\&. 
+.PP
+\fBParamètres:\fP
+.RS 4
+\fIlog_size\fP Le logarithme base 2 de la dimension de chaque sous-grille initiale 
+.br
+\fInbSeeds\fP Le nombre de sous-grilles initiales par direction 
+.br
+\fIdeviation\fP La valeur maximale du gradient entre deux altitudes\&. 
+.br
+\fIseed\fP Graîne de génération aléatoire 
+.RE
+.PP
+\fBRenvoie:\fP
+.RS 4
+Un tableau contenant la carte des altitudes en fonctions des indices i et j\&. 
+.RE
+.PP
+
+.PP
+
+
+.SH "Auteur"
+.PP 
+Généré automatiquement par Doxygen pour simants à partir du code source\&.

@@ -1,0 +1,82 @@
+.TH "gui" 3 "Wed Jan 17 2018" "Version 0.1" "Parallel" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+gui \- Color models\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBcontext\fP"
+.br
+.ti -1c
+.RI "class \fBevent_manager\fP"
+.br
+.RI "\fIManager for events\&. \fP"
+.ti -1c
+.RI "class \fBpoint\fP"
+.br
+.RI "\fIDescription of a point\&. \fP"
+.ti -1c
+.RI "class \fBquad\fP"
+.br
+.RI "\fIDescription of a line segment\&. \fP"
+.ti -1c
+.RI "class \fBsegment\fP"
+.br
+.RI "\fIDescription of a line segment\&. \fP"
+.ti -1c
+.RI "class \fBtriangle\fP"
+.br
+.RI "\fIDescription of a line segment\&. \fP"
+.ti -1c
+.RI "class \fBwindow\fP"
+.br
+.RI "\fIGraphic window on screen\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename Container > void \fBdraw\fP (const Container &pts)"
+.br
+.RI "\fIDraw some shapes on opengl display\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Color models\&. 
+
+Draw a segment on the screen\&.
+.PP
+Draw a triangle on the screen\&.
+.PP
+Point to draw on the screen\&.
+.PP
+Event manager : to attach processus\&.
+.PP
+Gui context and factory\&. 
+.SH "Function Documentation"
+.PP 
+.SS "template<typename Container > void gui::draw (const Container & pts)"
+
+.PP
+Draw some shapes on opengl display\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpts\fP The shapes to draw
+.RE
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIContainer\fP containing the shapes ( same kind of shapes ) 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Parallel from the source code\&.

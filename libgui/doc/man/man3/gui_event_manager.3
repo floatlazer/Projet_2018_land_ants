@@ -1,0 +1,176 @@
+.TH "gui::event_manager" 3 "Wed Jan 17 2018" "Version 0.1" "Parallel" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+gui::event_manager \- Manager for events\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <event_manager\&.hpp>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename F > void \fBon_key_event\fP (int key_code, F func)"
+.br
+.RI "\fIDéfini une fonction à déclencher lors d'un événement pour une touche particulière du clavier\&. \fP"
+.ti -1c
+.RI "void \fBkey_event\fP (int key_code) const "
+.br
+.RI "\fITrigger the event relative of the key code\&. \fP"
+.ti -1c
+.RI "template<typename F > void \fBon_mouse_button_event\fP (int num_but, F func)"
+.br
+.RI "\fIDéfini une fonction associée à un événement sur un bouton de la souris\&. \fP"
+.ti -1c
+.RI "void \fBmouse_button_event\fP (int num_but, int x, int y) const "
+.br
+.RI "\fITrigger the mouse button event relative to the button number\&. \fP"
+.ti -1c
+.RI "template<typename F > void \fBon_mouse_motion\fP (F func)"
+.br
+.RI "\fIDéfini une fonction associée au mouvement de la souris sur l'écran\&. \fP"
+.ti -1c
+.RI "void \fBmouse_motion_event\fP (int x, int y)"
+.br
+.RI "\fITrigger the event relative of the displacement of the mouse\&. \fP"
+.ti -1c
+.RI "template<typename F > void \fBon_display\fP (F func)"
+.br
+.RI "\fIDéfini une fonction d'affichage lors d'un rafraichissement de la fenêtre\&. \fP"
+.ti -1c
+.RI "template<typename F > void \fBon_idle\fP (F func)"
+.br
+.RI "\fIDéfini une fonction d'exécution quand le programme ne fait rien d'autre ( permet les animations ) \fP"
+.ti -1c
+.RI "void \fBloop\fP ()"
+.br
+.RI "\fIDo an infinite loop for interface\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Manager for events\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void gui::event_manager::key_event (int key_code) const\fC [inline]\fP"
+
+.PP
+Trigger the event relative of the key code\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIkey_code\fP The key code 
+.RE
+.PP
+
+.SS "void gui::event_manager::mouse_button_event (int num_but, int x, int y) const\fC [inline]\fP"
+
+.PP
+Trigger the mouse button event relative to the button number\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fInum_but\fP The number but 
+.br
+\fIx\fP Abcisse position of the mouse 
+.br
+\fIy\fP Ordinate position of the mouse 
+.RE
+.PP
+
+.SS "void gui::event_manager::mouse_motion_event (int x, int y)\fC [inline]\fP"
+
+.PP
+Trigger the event relative of the displacement of the mouse\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP Delta move of the mouse along the abcisse 
+.br
+\fIy\fP Delta move of the mouse along the ordinate 
+.RE
+.PP
+
+.SS "template<typename F > void gui::event_manager::on_display (F func)\fC [inline]\fP"
+
+.PP
+Défini une fonction d'affichage lors d'un rafraichissement de la fenêtre\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfunc\fP La fonction d'affichage ( ne prend rien en paramêtre, et ne retourne rien\&.\&.\&. ) 
+.RE
+.PP
+
+.SS "template<typename F > void gui::event_manager::on_idle (F func)\fC [inline]\fP"
+
+.PP
+Défini une fonction d'exécution quand le programme ne fait rien d'autre ( permet les animations ) 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfunc\fP La fonction à exécuter lorsqu'on ne fait rien d'autre ( ne prend rien en paramêtre, et ne retourne rien\&.\&.\&. ) 
+.RE
+.PP
+
+.SS "template<typename F > void gui::event_manager::on_key_event (int key_code, F func)\fC [inline]\fP"
+
+.PP
+Défini une fonction à déclencher lors d'un événement pour une touche particulière du clavier\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIkey_code\fP Le code de la touche clavier ( en ASCII ) 
+.br
+\fIfunc\fP La fonction à déclencher
+.RE
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIF\fP Fonction prenant un paramètre indiquant si la touche est pressée ou relachée 
+.RE
+.PP
+
+.SS "template<typename F > void gui::event_manager::on_mouse_button_event (int num_but, F func)\fC [inline]\fP"
+
+.PP
+Défini une fonction associée à un événement sur un bouton de la souris\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fInum_but\fP le numéro du bouton 
+.br
+\fIfunc\fP la fonction appelée lors de l'événement\&. Cette fonction prend trois paramètres entiers : 1\&. Si le bouton a été enfoncé ( 1 ) ou relaché ( 0 )
+.IP "2." 4
+et 3\&. : Les coordonnées de la souris sur l'écran
+.PP
+.RE
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIF\fP Une fonction prenant trois entiers en paramètre et ne renvoyant rien\&. 
+.RE
+.PP
+
+.SS "template<typename F > void gui::event_manager::on_mouse_motion (F func)\fC [inline]\fP"
+
+.PP
+Défini une fonction associée au mouvement de la souris sur l'écran\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfunc\fP La fonction à déclencher lorsqu'on bouge la souris
+.RE
+.PP
+\fBTemplate Parameters:\fP
+.RS 4
+\fIF\fP Une fonction prenant deux paramètres entier donnant la position relative de la souris par rapport à son ancienne position\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Parallel from the source code\&.

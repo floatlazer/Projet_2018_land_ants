@@ -1,0 +1,82 @@
+.TH "pheronome" 3 "Mercredi 17 Janvier 2018" "Version 0.1" "simants" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+pheronome \- Carte des phéronomes\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <pheronome\&.hpp>\fP
+.SS "Types publics"
+
+.in +1c
+.ti -1c
+.RI "using \fBsize_t\fP = unsigned long"
+.br
+.ti -1c
+.RI "using \fBpheronome_t\fP = std::array< double, 2 >"
+.br
+.in -1c
+.SS "Fonctions membres publiques"
+
+.in +1c
+.ti -1c
+.RI "\fBpheronome\fP (size_t dim, const position_t &pos_food, const position_t &pos_nest, double alpha=0\&.7, double beta=0\&.9999)"
+.br
+.RI "\fIConstruit une carte initiale des phéronomes\&. \fP"
+.ti -1c
+.RI "\fBpheronome\fP (const \fBpheronome\fP &)=delete"
+.br
+.ti -1c
+.RI "\fBpheronome\fP (\fBpheronome\fP &&)=delete"
+.br
+.ti -1c
+.RI "pheronome_t & \fBoperator()\fP (size_t i, size_t j)"
+.br
+.ti -1c
+.RI "const pheronome_t & \fBoperator()\fP (size_t i, size_t j) const "
+.br
+.ti -1c
+.RI "pheronome_t & \fBoperator[]\fP (const position_t &pos)"
+.br
+.ti -1c
+.RI "const pheronome_t & \fBoperator[]\fP (const position_t &pos) const "
+.br
+.ti -1c
+.RI "void \fBdo_evaporation\fP ()"
+.br
+.ti -1c
+.RI "void \fBmark_pheronome\fP (const position_t &pos)"
+.br
+.ti -1c
+.RI "void \fBupdate\fP ()"
+.br
+.in -1c
+.SH "Description détaillée"
+.PP 
+Carte des phéronomes\&. 
+
+Gère une carte des phéronomes avec leurs mis à jour ( dont l'évaporation ) 
+.SH "Documentation des constructeurs et destructeur"
+.PP 
+.SS "pheronome::pheronome (size_t dim, const position_t & pos_food, const position_t & pos_nest, double alpha = \fC0\&.7\fP, double beta = \fC0\&.9999\fP)\fC [inline]\fP"
+
+.PP
+Construit une carte initiale des phéronomes\&. La carte des phéronomes est initialisées à zéro ( neutre ) sauf pour les bords qui sont marqués comme indésirables
+.PP
+\fBParamètres:\fP
+.RS 4
+\fIdim\fP Nombre de cellule dans chaque direction 
+.br
+\fIalpha\fP Paramètre de bruit 
+.br
+\fIbeta\fP Paramêtre d'évaporation 
+.RE
+.PP
+
+
+.SH "Auteur"
+.PP 
+Généré automatiquement par Doxygen pour simants à partir du code source\&.

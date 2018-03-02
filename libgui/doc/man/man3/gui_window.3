@@ -1,0 +1,101 @@
+.TH "gui::window" 3 "Wed Jan 17 2018" "Version 0.1" "Parallel" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+gui::window \- Graphic window on screen\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <window\&.hpp>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBwindow\fP ()"
+.br
+.RI "\fICreate a default window\&. \fP"
+.ti -1c
+.RI "\fBwindow\fP (const std::string &title)"
+.br
+.RI "\fICreate a window with a specified title\&. \fP"
+.ti -1c
+.RI "\fBwindow\fP (const std::string &title, int size_x, int size_y, bool isFullScreen)"
+.br
+.RI "\fICreate a window with a specified title\&. \fP"
+.ti -1c
+.RI "\fBwindow\fP (const \fBwindow\fP &w)=delete"
+.br
+.ti -1c
+.RI "\fBwindow\fP (\fBwindow\fP &&w)=default"
+.br
+.ti -1c
+.RI "std::pair< int, int > \fBsize\fP () const "
+.br
+.RI "\fIReturn the size in pixels in each direction of the window\&. \fP"
+.ti -1c
+.RI "void \fBclear\fP ()"
+.br
+.RI "\fIClear the window\&. \fP"
+.ti -1c
+.RI "void \fBblit\fP ()"
+.br
+.RI "\fIPut the ready graphics on the window\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Graphic window on screen\&. 
+
+Create a window to display on a screen\&. Size, title and fullscreen are parametables\&. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "gui::window::window ()"
+
+.PP
+Create a default window\&. The default window : title : 'Default window', size : (800,800), isFullScreen = false 
+.SS "gui::window::window (const std::string & title)"
+
+.PP
+Create a window with a specified title\&. This window : size : (800,800), isFullScreen = false
+.PP
+\fBParameters:\fP
+.RS 4
+\fItitle\fP The title of the window 
+.RE
+.PP
+
+.SS "gui::window::window (const std::string & title, int size_x, int size_y, bool isFullScreen)"
+
+.PP
+Create a window with a specified title\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fItitle\fP The title of the window 
+.br
+\fIsize_x\fP The size in x of the window 
+.br
+\fIsize_y\fP The size in y of the window 
+.br
+\fIisFullScreen\fP Indicates if full screen 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "std::pair<int,int> gui::window::size () const\fC [inline]\fP"
+
+.PP
+Return the size in pixels in each direction of the window\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+A pair of int : first : number of pixels in x direction, second : number of pixels in y direction 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Parallel from the source code\&.
