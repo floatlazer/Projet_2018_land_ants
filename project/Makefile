@@ -35,7 +35,7 @@ $(PROJECT_ROOT)/include:
 
 $(LIB_DIR)/libsimants.so: $(OBJS)
 	@echo "\033[35m Linking " $@ "\033[0m"
-	@$(CXX) -shared $(CXXOPT) -L$(OPENGLLIBROOT) -o $@ $(OBJS) -Wl,-rpath=$(LIB_DIR) --enable-new-dtags -lglut -lGLU -lGL 
+	@$(CXX) -shared $(CXXOPT) -L$(OPENGLLIBROOT) -L$(LIB_DIR) -o $@ $(OBJS) -Wl,-rpath=$(LIB_DIR) --enable-new-dtags -lglut -lGLU -lGL 
 
 
 doc:
