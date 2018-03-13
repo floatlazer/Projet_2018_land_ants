@@ -12,6 +12,7 @@ public:
     /**
      * Une fourmi peut être dans deux états possibles : chargée ( elle porte de la nourriture ) ou non chargée
      */
+    ant() = default;
     enum state { unloaded = 0, loaded = 1 };
     ant(const position_t& pos) : m_state(unloaded), m_position(pos)
     {} 
