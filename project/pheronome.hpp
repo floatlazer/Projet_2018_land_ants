@@ -35,7 +35,7 @@ public:
           m_map_of_pheronome( m_stride * m_stride, {{0., 0.}} ),
           m_buffer_pheronome( ),
           m_pos_nest( pos_nest ),
-          m_pos_food( pos_food ) 
+          m_pos_food( pos_food )
           {
         m_map_of_pheronome[index(pos_food)][0] = 1.;
         m_map_of_pheronome[index(pos_nest)][1] = 1.;
@@ -119,8 +119,7 @@ private:
      */
     void cl_update( ) {
         // On mets tous les bords à -1 pour les marquer comme indésirables :
-        # pragma omp parallel for schedule(static)
-
+        # pragma omp parallel for
         for ( unsigned long j = 0; j < m_stride; ++j ) {
             m_map_of_pheronome[j]                            = {{-1., -1.}};
             m_map_of_pheronome[j + m_stride * ( m_dim + 1 )] = {{-1., -1.}};

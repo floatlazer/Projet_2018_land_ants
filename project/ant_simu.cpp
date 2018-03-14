@@ -18,11 +18,14 @@
 
 void advance_time( const fractal_land& land, pheronome& phen,
                    const position_t& pos_nest, const position_t& pos_food,
-                   std::vector<ant>& ants, std::size_t& cpteur )
+                   std::vector<ant>& ants, std::size_t& cpteur)
 {
-    # pragma omp parallel for schedule(static)
+    auto start = std::chrono::high_resolution_clock::now();
+    # pragma omp parallel for
     for ( size_t i = 0; i < ants.size(); ++i )
         ants[i].advance(phen, land, pos_food, pos_nest, cpteur);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout<<"Ants advance time cost: "<<std::chrono::duration<double>(end-start).count()<<"s"<<std::endl;
     phen.do_evaporation();
     phen.update();
 }
