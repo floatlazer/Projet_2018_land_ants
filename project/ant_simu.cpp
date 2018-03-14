@@ -14,8 +14,9 @@
 # include "display.hpp"
 # include <omp.h>
 # include <mpi.h>
+#include <chrono>
 
-void advance_time( const fractal_land& land, pheronome& phen, 
+void advance_time( const fractal_land& land, pheronome& phen,
                    const position_t& pos_nest, const position_t& pos_food,
                    std::vector<ant>& ants, std::size_t& cpteur )
 {
@@ -47,7 +48,7 @@ int main(int nargs, char* argv[])
     //const int i_nest = 256, j_nest = 256;
     // Location de la nourriture
     position_t pos_food{500,500};
-    //const int i_food = 500, j_food = 500;    
+    //const int i_food = 500, j_food = 500;
     // Génération du territoire 512 x 512 ( 2*(2^8) par direction )
     fractal_land land(8,2,1.,1024);
     double max_val = 0.0;
@@ -66,7 +67,7 @@ int main(int nargs, char* argv[])
         }
 
 
-    // Graphic    
+    // Graphic
     if(rank == 0)
     {
         std::vector<ant> ants(nb_ants);
@@ -80,7 +81,7 @@ int main(int nargs, char* argv[])
         gui::event_manager manager;
         manager.on_key_event(int('q'), [] (int code) { exit(0); });
         manager.on_display([&] { displayer.display(food_quantity); win.blit(); });
-        manager.on_idle([&] () { 
+        manager.on_idle([&] () {
             // Receive ants, phen and food_quantity
             ants.resize(0);
             size_t ants_pos[nb_ants*2] = {1};
@@ -90,12 +91,12 @@ int main(int nargs, char* argv[])
             // Update ants
             for(int i = 0; i < nb_ants; i++)
                 ants.emplace_back(std::pair<size_t, size_t>(ants_pos[i*2], ants_pos[i*2+1]));
-            displayer.display(food_quantity); 
-            win.blit(); 
+            displayer.display(food_quantity);
+            win.blit();
         });
         manager.loop();
     }
-    // Computation 
+    // Computation
     else
     {
         // Définition du coefficient d'exploration de toutes les fourmis.
@@ -115,10 +116,12 @@ int main(int nargs, char* argv[])
         size_t food_quantity = 0;
         while(1)
         {
+            double duration;
+            auto start = std::chrono::high_resolution_clock::now();
             advance_time(land, phen, pos_nest, pos_food, ants, food_quantity);
             // Send ants pos
             size_t ants_pos[nb_ants * 2];
-            for(auto i = 0; i < ants.size(); i++) 
+            for(auto i = 0; i < ants.size(); i++)
             {
                 ants_pos[2*i] = ants[i].get_position().first;
                 ants_pos[2*i + 1] = ants[i].get_position().second;
@@ -128,6 +131,9 @@ int main(int nargs, char* argv[])
             MPI_Send(&phen(0, 0), 2*land.dimensions()*land.dimensions(), MPI_DOUBLE, 0, 1, globComm);
             // Send food_quantity
             MPI_Send(&food_quantity, 1, MPI_UNSIGNED, 0, 2, globComm);
+            auto end = std::chrono::high_resolution_clock::now();
+            duration = std::chrono::duration<double>(end - start).count();
+            std::cout << "Cycle duration: "<<duration<<"s"<<std::endl;
         }
     }
 
