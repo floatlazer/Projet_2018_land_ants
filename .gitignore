@@ -1,0 +1,5 @@
+buid/
+*.exe
+*.a
+lib/
+lib64/

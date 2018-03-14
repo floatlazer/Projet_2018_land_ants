@@ -129,7 +129,7 @@ int main(int nargs, char* argv[])
                 ants_pos[2*i] = ants[i].get_position().first;
                 ants_pos[2*i + 1] = ants[i].get_position().second;
             }
-            MPI_Send(&ants_pos, nb_ants * 2, MPI_UNSIGNED, 0, 0, globComm);
+            MPI_Send(&ants_pos[0], nb_ants * 2, MPI_UNSIGNED, 0, 0, globComm);
             // Send phen
             MPI_Send(&phen(0, 0), 2*land.dimensions()*land.dimensions(), MPI_DOUBLE, 0, 1, globComm);
             // Send food_quantity
