@@ -18,16 +18,16 @@
 
 void advance_time( const fractal_land& land, pheronome& phen,
                    const position_t& pos_nest, const position_t& pos_food,
-                   std::vector<ant>& ants, std::size_t& cpteur)
+                   std::vector<ant>& ants, std::size_t& cpteur, size_t begin, size_t end)
 {
-    auto start = std::chrono::high_resolution_clock::now();
     # pragma omp parallel for
-    for ( size_t i = 0; i < ants.size(); ++i )
+    for ( size_t i = begin; i < end; ++i )
         ants[i].advance(phen, land, pos_food, pos_nest, cpteur);
-    auto end = std::chrono::high_resolution_clock::now();
-    std::cout<<"Ants advance time cost: "<<std::chrono::duration<double>(end-start).count()<<"s"<<std::endl;
-    phen.do_evaporation();
-    phen.update();
+    if(end == ants.size())
+    {
+      phen.do_evaporation();
+      phen.update();
+    }
 }
 
 int main(int nargs, char* argv[])
@@ -69,10 +69,11 @@ int main(int nargs, char* argv[])
             land(i,j) = (land(i,j)-min_val)/delta;
         }
 
-
+    MPI_Comm computeCom;
     // Graphic
     if(rank == 0)
     {
+        MPI_Comm_split(globComm, MPI_UNDEFINED, 0, &computeCom);
         std::vector<ant> ants(nb_ants);
         //ants.reserve(nb_ants);
         pheronome phen(land.dimensions(), pos_food, pos_nest, alpha, beta);
@@ -102,6 +103,7 @@ int main(int nargs, char* argv[])
     // Computation
     else
     {
+        MPI_Comm_split(globComm, 1, rank, &computeCom);
         // Définition du coefficient d'exploration de toutes les fourmis.
         ant::set_exploration_coef(eps);
         // On va créer des fourmis un peu partout sur la carte :
@@ -120,23 +122,32 @@ int main(int nargs, char* argv[])
         while(1)
         {
             double duration;
-            auto start = std::chrono::high_resolution_clock::now();
-            advance_time(land, phen, pos_nest, pos_food, ants, food_quantity);
+            auto start_time = std::chrono::high_resolution_clock::now();
+            size_t begin = ants.size() / (nbp - 1) * (rank - 1);
+            size_t end = ants.size() / (nbp - 1) * rank;
+            if(end >= ants.size()) end = ants.size();
+            advance_time(land, phen, pos_nest, pos_food, ants, food_quantity, begin, end);
             // Send ants pos
             size_t ants_pos[nb_ants * 2];
-            for(auto i = 0; i < ants.size(); i++)
+            size_t ants_pos_send[nb_ants * 2];
+            for(auto i = begin; i < end; i++)
             {
                 ants_pos[2*i] = ants[i].get_position().first;
                 ants_pos[2*i + 1] = ants[i].get_position().second;
             }
-            MPI_Send(&ants_pos, nb_ants * 2, MPI_UNSIGNED, 0, 0, globComm);
-            // Send phen
-            MPI_Send(&phen(0, 0), 2*land.dimensions()*land.dimensions(), MPI_DOUBLE, 0, 1, globComm);
-            // Send food_quantity
-            MPI_Send(&food_quantity, 1, MPI_UNSIGNED, 0, 2, globComm);
-            auto end = std::chrono::high_resolution_clock::now();
-            duration = std::chrono::duration<double>(end - start).count();
-            std::cout << "Cycle duration: "<<duration<<"s"<<std::endl;
+            MPI_Gather(&ants_pos[begin], (end - begin)*2, MPI_UNSIGNED, &ants_pos_send[0], (end - begin)*2, MPI_UNSIGNED, 0, computeCom);
+            if(rank == 1)
+            {
+                MPI_Send(&ants_pos[0], nb_ants * 2, MPI_UNSIGNED, 0, 0, globComm);
+                // Send phen
+                MPI_Send(&phen(0, 0), 2*land.dimensions()*land.dimensions(), MPI_DOUBLE, 0, 1, globComm);
+                // Send food_quantity
+                MPI_Send(&food_quantity, 1, MPI_UNSIGNED, 0, 2, globComm);
+            }
+            auto end_time = std::chrono::high_resolution_clock::now();
+            duration = std::chrono::duration<double>(end_time - start_time).count();
+            std::cout << "Process "<<rank<<" ants ["<<begin<<", "<<end<<"] "<<
+            "duration: "<<duration<<"s"<<std::endl;
         }
     }
 
