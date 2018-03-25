@@ -1,16 +1,29 @@
 #include "ant.hpp"
 #include <iostream>
 #include <random>
-
+#include <omp.h>
+#include <chrono>
 double ant::m_eps = 0.;
 
 void ant::advance( pheronome& phen, const fractal_land& land, const position_t& pos_food, const position_t& pos_nest,
-                   std::size_t& cpteur_food ) 
+                   std::size_t& cpteur_food )
 {
+    //auto start = std::chrono::high_resolution_clock::now();
     std::random_device                       rd;  // Will be used to obtain a seed for the random number engine
-    std::mt19937                             gen( rd( ) );  // Standard mersenne_twister_engine seeded with rd()
+    unsigned int seed;
+    #pragma omp single
+    {
+      seed = rd(); // Multiple random device access takes a lot of time
+    }
+    seed += omp_get_thread_num() + 1; // To give different seed in different thread
+
+    //auto end = std::chrono::high_resolution_clock::now();
+    //std::cout<<"Thread"<<omp_get_thread_num()<<" Random device time cost: "<<std::chrono::duration<double>(end-start).count()<<"s seed = "<<seed<<std::endl;
+    std::mt19937                             gen( seed );  // Standard mersenne_twister_engine seeded with rd()
     std::uniform_real_distribution< double > ant_choice( 0., 1. );
     std::uniform_int_distribution<int> dir_choice(1,4);
+
+
     double                                   consumed_time = 0.;
     // Tant que la fourmi peut encore bouger dans le pas de temps imparti
     while ( consumed_time < 1. ) {

@@ -25,9 +25,12 @@ void advance_time( const fractal_land& land, pheronome& phen,
     for ( size_t i = 0; i < ants.size(); ++i )
         ants[i].advance(phen, land, pos_food, pos_nest, cpteur);
     auto end = std::chrono::high_resolution_clock::now();
-    std::cout<<"Ants advance time cost: "<<std::chrono::duration<double>(end-start).count()<<"s"<<std::endl;
+    std::cout<<"Ants advance time cost: "<<std::chrono::duration<double>(end-start).count()<<"s | ";
+    start = std::chrono::high_resolution_clock::now();
     phen.do_evaporation();
     phen.update();
+    end = std::chrono::high_resolution_clock::now();
+    std::cout<<"Update pheronome time cost: "<<std::chrono::duration<double>(end-start).count()<<"s"<<std::endl;
 }
 
 int main(int nargs, char* argv[])
@@ -82,6 +85,8 @@ int main(int nargs, char* argv[])
         gui::window& win =  graphic_context.new_window(2*land.dimensions()+10,land.dimensions()+266);
         display_t displayer( land, phen, pos_nest, pos_food, ants, win );
         gui::event_manager manager;
+        auto lastDisp = std::chrono::high_resolution_clock::now();
+        double duration;
         manager.on_key_event(int('q'), [] (int code) { exit(0); });
         manager.on_display([&] { displayer.display(food_quantity); win.blit(); });
         manager.on_idle([&] () {
@@ -96,6 +101,10 @@ int main(int nargs, char* argv[])
                 ants.emplace_back(std::pair<size_t, size_t>(ants_pos[i*2], ants_pos[i*2+1]));
             displayer.display(food_quantity);
             win.blit();
+            auto disp = std::chrono::high_resolution_clock::now();
+            duration = std::chrono::duration<double>(disp - lastDisp).count();
+            std::cout << "Display interval: "<<duration<<"s"<<std::endl;
+            lastDisp = disp;
         });
         manager.loop();
     }
@@ -117,6 +126,9 @@ int main(int nargs, char* argv[])
 
         // Compteur de la quantité de nourriture apportée au nid par les fourmis
         size_t food_quantity = 0;
+        MPI_Request request[3];
+        MPI_Status status[3];
+        int received = true;
         while(1)
         {
             double duration;
@@ -129,11 +141,15 @@ int main(int nargs, char* argv[])
                 ants_pos[2*i] = ants[i].get_position().first;
                 ants_pos[2*i + 1] = ants[i].get_position().second;
             }
-            MPI_Send(&ants_pos[0], nb_ants * 2, MPI_UNSIGNED, 0, 0, globComm);
-            // Send phen
-            MPI_Send(&phen(0, 0), 2*land.dimensions()*land.dimensions(), MPI_DOUBLE, 0, 1, globComm);
-            // Send food_quantity
-            MPI_Send(&food_quantity, 1, MPI_UNSIGNED, 0, 2, globComm);
+            if(received) // Send only if the last group has been received
+            {
+              MPI_Issend(&ants_pos[0], nb_ants * 2, MPI_UNSIGNED, 0, 0, globComm, &request[0]); // use asychronous blocking send
+              // Send phen
+              MPI_Issend(&phen(0, 0), 2*land.dimensions()*land.dimensions(), MPI_DOUBLE, 0, 1, globComm, &request[1]);
+              // Send food_quantity
+              MPI_Issend(&food_quantity, 1, MPI_UNSIGNED, 0, 2, globComm, &request[2]);
+            }
+            MPI_Testall(3, request, &received, status);
             auto end = std::chrono::high_resolution_clock::now();
             duration = std::chrono::duration<double>(end - start).count();
             std::cout << "Cycle duration: "<<duration<<"s"<<std::endl;
