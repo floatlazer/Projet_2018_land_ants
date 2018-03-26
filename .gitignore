@@ -3,3 +3,4 @@ build
 *.a
 lib/
 lib64/
+Make.inc
