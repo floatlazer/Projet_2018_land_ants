@@ -1,0 +1,1 @@
+rm -rf lib libgui/build libgui/thirdparty/build test/*

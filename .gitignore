@@ -1,5 +1,9 @@
-build
-*.exe
+build/
+test/
 *.a
+*.o
+*.exe
+*.includecache
+*.so
 lib/
 lib64/
