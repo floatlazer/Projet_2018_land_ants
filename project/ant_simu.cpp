@@ -117,6 +117,8 @@ int main(int nargs, char* argv[])
 
         // Compteur de la quantité de nourriture apportée au nid par les fourmis
         size_t food_quantity = 0;
+        size_t food_quantity_send;
+
         while(1)
         {
             double duration;
@@ -137,6 +139,8 @@ int main(int nargs, char* argv[])
             MPI_Gather(&ants_pos[0], (end - begin)*2, MPI_UNSIGNED, &ants_pos_send[0], (end - begin)*2, MPI_UNSIGNED, 0, computeCom);
             // Reduce and broadcast pheromone
             MPI_Allreduce(MPI_IN_PLACE, &phen(0,0), 2*land.dimensions()*land.dimensions(), MPI_DOUBLE, MPI_MAX, computeCom);
+            // Sum food_quantity
+            MPI_Reduce(&food_quantity, &food_quantity_send, 1, MPI_UNSIGNED, MPI_SUM, 0, computeCom);
             // Send
             if(rank == 1)
             {
@@ -145,7 +149,7 @@ int main(int nargs, char* argv[])
                 // Send phen
                 MPI_Send(&phen(0, 0), 2*land.dimensions()*land.dimensions(), MPI_DOUBLE, 0, 1, globComm);
                 // Send food_quantity
-                MPI_Send(&food_quantity, 1, MPI_UNSIGNED, 0, 2, globComm);
+                MPI_Send(&food_quantity_send, 1, MPI_UNSIGNED, 0, 2, globComm);
             }
             auto end_time = std::chrono::high_resolution_clock::now();
             duration = std::chrono::duration<double>(end_time - start_time).count();
