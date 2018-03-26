@@ -23,11 +23,6 @@ void advance_time( const fractal_land& land, pheronome& phen,
     # pragma omp parallel for
     for ( size_t i = begin; i < end; ++i )
         ants[i].advance(phen, land, pos_food, pos_nest, cpteur);
-    if(end == ants.size())
-    {
-      phen.do_evaporation();
-      phen.update();
-    }
 }
 
 int main(int nargs, char* argv[])
@@ -69,12 +64,13 @@ int main(int nargs, char* argv[])
             land(i,j) = (land(i,j)-min_val)/delta;
         }
 
+    size_t real_nb = nb_ants / (nbp - 1) * (nbp - 1);
     MPI_Comm computeCom;
     // Graphic
     if(rank == 0)
     {
         MPI_Comm_split(globComm, MPI_UNDEFINED, 0, &computeCom);
-        std::vector<ant> ants(nb_ants);
+        std::vector<ant> ants(real_nb);
         //ants.reserve(nb_ants);
         pheronome phen(land.dimensions(), pos_food, pos_nest, alpha, beta);
         size_t food_quantity = 0;
@@ -89,11 +85,11 @@ int main(int nargs, char* argv[])
             // Receive ants, phen and food_quantity
             ants.resize(0);
             size_t ants_pos[nb_ants*2] = {1};
-            MPI_Recv(ants_pos, nb_ants*2, MPI_UNSIGNED, MPI_ANY_SOURCE, 0, globComm, NULL);
+            MPI_Recv(ants_pos, real_nb*2, MPI_UNSIGNED, MPI_ANY_SOURCE, 0, globComm, NULL);
             MPI_Recv(&phen(0,0), 2*land.dimensions()*land.dimensions(), MPI_DOUBLE, MPI_ANY_SOURCE, 1, globComm, NULL);
             MPI_Recv(&food_quantity, 1, MPI_UNSIGNED, MPI_ANY_SOURCE, 2, globComm, NULL);
             // Update ants
-            for(int i = 0; i < nb_ants; i++)
+            for(int i = 0; i < real_nb; i++)
                 ants.emplace_back(std::pair<size_t, size_t>(ants_pos[i*2], ants_pos[i*2+1]));
             displayer.display(food_quantity);
             win.blit();
@@ -103,7 +99,7 @@ int main(int nargs, char* argv[])
     // Computation
     else
     {
-        MPI_Comm_split(globComm, 1, rank, &computeCom);
+        MPI_Comm_split(globComm, 0, rank, &computeCom);
         // Définition du coefficient d'exploration de toutes les fourmis.
         ant::set_exploration_coef(eps);
         // On va créer des fourmis un peu partout sur la carte :
@@ -128,17 +124,39 @@ int main(int nargs, char* argv[])
             if(end >= ants.size()) end = ants.size();
             advance_time(land, phen, pos_nest, pos_food, ants, food_quantity, begin, end);
             // Send ants pos
-            size_t ants_pos[nb_ants * 2];
-            size_t ants_pos_send[nb_ants * 2];
+            size_t ants_pos[real_nb * 2];
+            int ants_state[real_nb];
+            size_t ants_pos_send[real_nb * 2];
+            int ants_state_send[real_nb];
             for(auto i = begin; i < end; i++)
-            {
+            {   
+                ants_state[i] = ants[i].is_loaded();
                 ants_pos[2*i] = ants[i].get_position().first;
                 ants_pos[2*i + 1] = ants[i].get_position().second;
             }
-            MPI_Gather(&ants_pos[begin], (end - begin)*2, MPI_UNSIGNED, &ants_pos_send[0], (end - begin)*2, MPI_UNSIGNED, 0, computeCom);
+            MPI_Gather(&ants_pos[2*begin], (end - begin)*2, MPI_UNSIGNED, &ants_pos_send[0], (end - begin)*2, MPI_UNSIGNED, 0, computeCom);
+            MPI_Gather(&ants_state[begin], (end - begin), MPI_INT, &ants_state_send[0], (end - begin), MPI_INT, 0, computeCom);
+
+            // update ants state and update pheromone
             if(rank == 1)
             {
-                MPI_Send(&ants_pos[0], nb_ants * 2, MPI_UNSIGNED, 0, 0, globComm);
+                for(size_t i = 0; i < real_nb; i++)
+                {
+                    if(ants_state_send[i] == 1) 
+                        ants[i].set_loaded();
+                    else
+                        ants[i].unset_loaded(); 
+                }
+                phen.do_evaporation();
+                phen.update();
+            }
+            // broadcast pheromone
+            MPI_Bcast(&phen(0, 0), 2*land.dimensions()*land.dimensions(), MPI_DOUBLE, 0, computeCom);
+            // Send
+            if(rank == 1)
+            {
+                // Send pos
+                MPI_Send(&ants_pos_send[0], real_nb * 2, MPI_UNSIGNED, 0, 0, globComm);
                 // Send phen
                 MPI_Send(&phen(0, 0), 2*land.dimensions()*land.dimensions(), MPI_DOUBLE, 0, 1, globComm);
                 // Send food_quantity

@@ -1,0 +1,10 @@
+prefix=/auto/x/xuazhang/2A/IN203/Projet_2018_land_ants/libgui/thirdparty/build/../../..
+libdir=/auto/x/xuazhang/2A/IN203/Projet_2018_land_ants/libgui/thirdparty/build/../../../lib/x86_64-linux-gnu
+includedir=${prefix}/include
+
+Name: glut
+Description: A freely licensed and improved alternative to the GLUT library
+Version: 3.0.0
+Libs: -L${libdir} -lglut
+Libs.private: -lX11 -lXxf86vm -lXrandr -lGL -lm
+Cflags: -I${includedir} 
