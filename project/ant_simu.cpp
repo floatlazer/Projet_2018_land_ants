@@ -23,6 +23,8 @@ void advance_time( const fractal_land& land, pheronome& phen,
     # pragma omp parallel for
     for ( size_t i = begin; i < end; ++i )
         ants[i].advance(phen, land, pos_food, pos_nest, cpteur);
+    phen.do_evaporation();
+    phen.update();
 }
 
 int main(int nargs, char* argv[])
@@ -124,34 +126,17 @@ int main(int nargs, char* argv[])
             if(end >= ants.size()) end = ants.size();
             advance_time(land, phen, pos_nest, pos_food, ants, food_quantity, begin, end);
             // Send ants pos
-            size_t ants_pos[real_nb * 2];
-            int ants_state[real_nb];
+            size_t ants_pos[(begin-end)*2];
             size_t ants_pos_send[real_nb * 2];
-            int ants_state_send[real_nb];
             for(auto i = begin; i < end; i++)
-            {   
-                ants_state[i] = ants[i].is_loaded();
-                ants_pos[2*i] = ants[i].get_position().first;
-                ants_pos[2*i + 1] = ants[i].get_position().second;
-            }
-            MPI_Gather(&ants_pos[2*begin], (end - begin)*2, MPI_UNSIGNED, &ants_pos_send[0], (end - begin)*2, MPI_UNSIGNED, 0, computeCom);
-            MPI_Gather(&ants_state[begin], (end - begin), MPI_INT, &ants_state_send[0], (end - begin), MPI_INT, 0, computeCom);
-
-            // update ants state and update pheromone
-            if(rank == 1)
             {
-                for(size_t i = 0; i < real_nb; i++)
-                {
-                    if(ants_state_send[i] == 1) 
-                        ants[i].set_loaded();
-                    else
-                        ants[i].unset_loaded(); 
-                }
-                phen.do_evaporation();
-                phen.update();
+                ants_pos[2*(i-begin)] = ants[i].get_position().first;
+                ants_pos[2*(i-begin) + 1] = ants[i].get_position().second;
             }
-            // broadcast pheromone
-            MPI_Bcast(&phen(0, 0), 2*land.dimensions()*land.dimensions(), MPI_DOUBLE, 0, computeCom);
+            // Gather ants positions
+            MPI_Gather(&ants_pos[0], (end - begin)*2, MPI_UNSIGNED, &ants_pos_send[0], (end - begin)*2, MPI_UNSIGNED, 0, computeCom);
+            // Reduce and broadcast pheromone
+            MPI_Allreduce(MPI_IN_PLACE, &phen(0,0), 2*land.dimensions()*land.dimensions(), MPI_DOUBLE, MPI_MAX, computeCom);
             // Send
             if(rank == 1)
             {

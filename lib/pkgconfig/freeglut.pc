@@ -1,5 +1,5 @@
-prefix=/auto/x/xuazhang/2A/IN203/Projet_2018_land_ants/libgui/thirdparty/build/../../..
-libdir=/auto/x/xuazhang/2A/IN203/Projet_2018_land_ants/libgui/thirdparty/build/../../../lib/x86_64-linux-gnu
+prefix=/home/zhangxuan/workspace/Projet_2018_land_ants/libgui/thirdparty/build/../../..
+libdir=/home/zhangxuan/workspace/Projet_2018_land_ants/libgui/thirdparty/build/../../../lib
 includedir=${prefix}/include
 
 Name: glut
