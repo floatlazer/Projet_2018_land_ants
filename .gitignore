@@ -5,3 +5,5 @@ test/
 *.exe
 *.includecache
 *.so
+lib/
+Make.inc
