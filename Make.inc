@@ -23,4 +23,4 @@ DOXYGENEXE = /usr/bin/doxygen
 INCPATH= -I$(MPIROOT)/include                \
 	     -I$(PROJECT_ROOT)/include
 
-LIBPATH= -L$(OPENGLLIBROOT) -L$(PROJECT_ROOT)/lib 
+LIBPATH= -L$(OPENGLLIBROOT) -L$(PROJECT_ROOT)/lib

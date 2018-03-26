@@ -6,4 +6,3 @@ test/
 *.includecache
 *.so
 lib/
-Make.inc
