@@ -128,7 +128,7 @@ int main(int nargs, char* argv[])
             if(end >= ants.size()) end = ants.size();
             advance_time(land, phen, pos_nest, pos_food, ants, food_quantity, begin, end);
             // Send ants pos
-            size_t ants_pos[(begin-end)*2];
+            size_t ants_pos[(end-begin)*2];
             size_t ants_pos_send[real_nb * 2];
             for(auto i = begin; i < end; i++)
             {

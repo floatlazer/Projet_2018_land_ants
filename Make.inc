@@ -1,7 +1,7 @@
 # Makefile principal
 # VARIABLES POUVANT ETRE REDEFINIS PAR L'UTILISATEUR
 # DIRECTORY OU EST INSTALLE HPNUM :
-PROJECT_ROOT = /home/x/xuazhang/2A/IN203/Projet_2018_land_ants/
+PROJECT_ROOT = /home/x/xuazhang/2A/IN203/Projet_2018_land_ants
 #PROJECT_ROOT =/home/zhangxuan/workspace/Projet_2018_land_ants
 #/home/juvigny/Documents/Cours/Paris6/2018/simants_project
 # /home/juvigny/Cours.d/ParisVI/2017/simants_project

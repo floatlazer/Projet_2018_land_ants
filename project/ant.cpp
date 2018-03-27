@@ -49,6 +49,7 @@ void ant::advance( pheronome& phen, const fractal_land& land, const position_t& 
         m_position = new_pos_ant;
         if ( get_position( ) == pos_nest ) {
             if ( is_loaded( ) ) {
+                #pragma omp atomic
                 cpteur_food += 1;
             }
             unset_loaded( );
